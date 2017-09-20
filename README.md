@@ -24,7 +24,7 @@ $ git clone https://github.com/q82419/ntuchorus-server.git
 
    Use `npm` to install the needed packages described in `package.json`.
 
-   ```
+   ```bash
    $ cd ./your-working-directory/
    $ npm install
    ```
@@ -33,21 +33,21 @@ $ git clone https://github.com/q82419/ntuchorus-server.git
 
 1. Configure the Facebook application id and secret for member systems.
    - Open the file.
-     ```
+     ```bash
      $ vim login.js
      ```
    - Edit the appId and appSecret.
-     ```
+     ```javascript
      fb.options({version: 'v2.8', appId: '[FACEBOOK_APP_ID]', appSecret: 'FACEBOK_APP_SECRET'});
      ```
 
 2. Configure the mysql database locations
    - Open the file.
-     ```
+     ```bash
      $ vim db.js
      ```
    - Edit the host, username, and password.
-     ```
+     ```javascript
      var pool = mysql.createPool({
          host                : '[YOUR_HOST]',
          user                : '[USER_NAME]',
