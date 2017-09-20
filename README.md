@@ -14,18 +14,47 @@ This project is the server code of [NTUChorus github](http://ntuchorus.github.io
 
 ## Installation
 
-1. Clone this repo
+1. Clone this repository.
+
 ```
 $ git clone https://github.com/q82419/ntuchorus-server.git
 ```
 
 2. Prepare NodeJS packages
-Use `npm` to install the needed packages described in `package.json`.
-```
-$ cd ./your-working-directory/
-$ npm install
-```
+
+   Use `npm` to install the needed packages described in `package.json`.
+
+   ```
+   $ cd ./your-working-directory/
+   $ npm install
+   ```
 
 ## Configuration
 
+1. Configure the Facebook application id and secret for member systems.
+   - Open the file.
+     ```
+     $ vim login.js
+     ```
+   - Edit the appId and appSecret.
+     ```
+     fb.options({version: 'v2.8', appId: '[FACEBOOK_APP_ID]', appSecret: 'FACEBOK_APP_SECRET'});
+     ```
 
+2. Configure the mysql database locations
+   - Open the file.
+     ```
+     $ vim db.js
+     ```
+   - Edit the host, username, and password.
+     ```
+     var pool = mysql.createPool({
+         host                : '[YOUR_HOST]',
+         user                : '[USER_NAME]',
+         password            : '[PASSWORD]',
+         database            : '[DATABASE]',
+         charset             : 'utf8',
+         waitForConnections  : true,
+         connectionLimit     : 40
+     });
+     ```
