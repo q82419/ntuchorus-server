@@ -3,7 +3,7 @@ var log = require('./log');
 var fb = require('fb');
 var TAG = "[ CHECK   FB ]";
 
-fb.options({version: 'v2.8', appId: '[FACEBOOK_APP_ID]', appSecret: 'FACEBOOK_APP_SECRET'});
+fb.options({version: 'v2.8', appId: '[FACEBOOK_APP_ID]', appSecret: '[FACEBOOK_APP_SECRET]'});
 // Result -1: Error, others: Permission_Num
 
 module.exports = {
@@ -38,7 +38,7 @@ function queryManager(vid, vname, ip, callback){
             addManager(vid, vname, callback);
         }
         else{
-            callback({'status': rows[0]['permission'], 'fbid': rows[0]['fbid'], 'id': rows[0]['id']});
+            callback({'status': rows[0]['permission'], 'user': rows[0]});
         }
     });
 }

@@ -33,13 +33,13 @@ function checkPermission(query, ip, callback){
                 callback({'status': '2'})
             }
             else{
-                processCommand(query['id'], result['status'], query, ip, callback);
+                processCommand(query['id'], result, query, ip, callback);
             }
         });
     }
 }
 
-function processCommand(fbid, perm, query, ip, callback){
+function processCommand(fbid, res, query, ip, callback){
     var queryCurrProgram = 'SELECT * FROM mapattribute;';
     db.dbQuery(queryCurrProgram, callback, function(rows){
         var currProgram = rows[0]['currentdataid'];
@@ -49,19 +49,19 @@ function processCommand(fbid, perm, query, ip, callback){
         var isShowHidden = rows[0]['isshowhidden'];
 
         if(query['cmd'] == 'reqMap'){
-            requestGraph('guest', perm, queryProgram, isShowHidden, ip, callback);
+            requestGraph('guest', res['status'], queryProgram, isShowHidden, res['user'], ip, callback);
         }
-        else if(query['cmd'] == 'reqTicket' && perm >= 1){
-            requestGraph(fbid, perm, queryProgram, isShowHidden, ip, callback);
+        else if(query['cmd'] == 'reqTicket' && res['status'] >= 1){
+            requestGraph(fbid, res['status'], queryProgram, isShowHidden, res['user'], ip, callback);
         }
-        else if(query['cmd'] == 'reqOrder' && perm >= 2){
-            requestOrder(fbid, queryProgram, ip, callback);
+        else if(query['cmd'] == 'reqOrder' && res['status'] >= 2){
+            requestOrder(fbid, queryProgram, res['user'], ip, callback);
         }
-        else if(query['cmd'] == 'reqTotal' && perm >= 2){
-            requestTotal(fbid, queryProgram, ip, callback);
+        else if(query['cmd'] == 'reqTotal' && res['status'] >= 2){
+            requestTotal(fbid, queryProgram, res['user'], ip, callback);
         }
-        else if(query['cmd'] == 'reqNewCategory' && perm >= 3){
-            requestNewCategory(fbid, queryProgram, ip, callback);
+        else if(query['cmd'] == 'reqNewCategory' && res['status'] >= 3){
+            requestNewCategory(fbid, queryProgram, res['user'], ip, callback);
         }
         else{
             log.out.w(TAG_m, ip, query['cmd'] + " Permission Denied: " + query['id']);
@@ -86,7 +86,7 @@ function doRequestTasks(queryset, callback){
 }
 
 /* Request ticket data in this program */
-function requestGraph(fbid, perm, pid, showhidden, ip, callback){
+function requestGraph(fbid, perm, pid, showhidden, user, ip, callback){
     var queryset = { 'mapattribute' : 'SELECT * FROM mapattribute;',
                      'category'     : 'SELECT * FROM mapcategory;',
                      'ticket'       : 'SELECT * FROM data' + pid + '_ticket;',
@@ -112,12 +112,13 @@ function requestGraph(fbid, perm, pid, showhidden, ip, callback){
     doRequestTasks(queryset, function(data){
         for(var i in data['category'])
             data['category'][i]['time'] = dateFormat(data['category'][i]['time'], "yyyy/mm/dd HH:MM:ss");
+        data['user'] = user;
         callback(data);
     });
 }
 
 /* Request total order data in this program */
-function requestOrder(fbid, pid, ip, callback){
+function requestOrder(fbid, pid, user, ip, callback){
     log.out.i(TAG_a, ip, "Request full orders from: " + fbid);
     var queryset = { 'mapattribute' : 'SELECT * FROM mapattribute;',
                      'category'     : 'SELECT * FROM mapcategory;',
@@ -132,12 +133,13 @@ function requestOrder(fbid, pid, ip, callback){
     doRequestTasks(queryset, function(data){
         for(var i in data['category'])
             data['category'][i]['time'] = dateFormat(data['category'][i]['time'], "yyyy/mm/dd HH:MM:ss");
+        data['user'] = user;
         callback(data);
     });
 }
 
 /* Request total statistic data in this program */
-function requestTotal(fbid, pid, ip, callback){
+function requestTotal(fbid, pid, user, ip, callback){
     log.out.i(TAG_a, ip, "Request program statistics from: " + fbid);
     var queryset = { 'mapattribute'  : 'SELECT * FROM mapattribute;',
                      'category'      : 'SELECT * FROM mapcategory;',
@@ -217,22 +219,23 @@ function requestTotal(fbid, pid, ip, callback){
     doRequestTasks(queryset, function(data){
         for(var i in data['category'])
             data['category'][i]['time'] = dateFormat(data['category'][i]['time'], "yyyy/mm/dd HH:MM:ss");
+        data['user'] = user;
         callback(data);
     });
 }
 
 /* Request for create a new program category */
-function requestNewCategory(fbid, pid, ip, callback){
+function requestNewCategory(fbid, pid, user, ip, callback){
     log.out.i(TAG_a, ip, "Request new category from: " + fbid);
     var queryset = { 'mapattribute' : 'SELECT * FROM mapattribute;',
                      'category'     : 'SELECT * FROM mapcategory;',
                      'price'        : 'SELECT * FROM data' + pid + '_price;',
                      'manager'      : 'SELECT * FROM manager ORDER BY id DESC;',
                      'mapindex'     : 'SELECT * FROM mapindex;',
-                     'selfFBID'     : 'SELECT * FROM manager WHERE fbid = ' + fbid + ';'
                    };
 
     doRequestTasks(queryset, function(data){
+        data['user'] = user;
         callback(data);
     });
 }

@@ -27,12 +27,12 @@ function checkPermission(query, ip, callback){
             callback({'status': '2'})
         }
         else{
-            processCommand(query['id'], result['id'], result['status'], query, ip, callback);
+            processCommand(query['id'], result['user'], result['status'], query, ip, callback);
         }
     });
 }
 
-function processCommand(fbid, mngid, perm, query, ip, callback){
+function processCommand(fbid, mngdata, perm, query, ip, callback){
     var queryCurrProgram = 'SELECT * FROM mapattribute;';
     var queryGroupManager;
     db.dbQuery(queryCurrProgram, callback, function(rows){
@@ -40,7 +40,7 @@ function processCommand(fbid, mngid, perm, query, ip, callback){
         var queryProgram = currProgram;
         if(query['programid'] != undefined)
             queryProgram = query['programid'];
-        queryGroupManager = 'SELECT * FROM data' + queryProgram + '_manager WHERE managerid = ' + mngid + ';'
+        queryGroupManager = 'SELECT * FROM data' + queryProgram + '_manager WHERE managerid = ' + mngdata['id'] + ';';
         db.dbQuery(queryGroupManager, callback, function(mnger){
             var department = -1;
             if(mnger.length == 1)
