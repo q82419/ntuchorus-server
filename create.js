@@ -87,6 +87,7 @@ function createNewProgram(fbid, data, ip, callback){
         for(var i = 0; i < data['price'].length; i++)
             createset.push('INSERT INTO data' + result.insertId + '_price VALUES (' + data['price'][i]['id'] + ', ' + data['price'][i]['price'] + ', ' + data['price'][i]['discount'] + ');');
         createset.push('INSERT INTO data' + result.insertId + '_ticket (floor, row, seat, state, type, preserve) SELECT floor, row, seat, state, type, preserve FROM mapinit' + data['mapid'] + ';');
+        createset.push('UPDATE data' + result.insertId + '_ticket SET type = 0 WHERE type >= ' + (data['price'].length - 1) + ';');
         createset.push('UPDATE mapattribute SET currentdataid = ' + result.insertId + ', isshowhidden = 0 WHERE id = 1;');
         var createsetfunction = [];
         createset.forEach(function(item){

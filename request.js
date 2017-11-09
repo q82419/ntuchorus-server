@@ -152,6 +152,8 @@ function requestTotal(fbid, pid, user, ip, callback){
                                               'SUM(IF(data' + pid + '_ticket.type = 1, 1, 0)) AS type1, ' + 
                                               'SUM(IF(data' + pid + '_ticket.type = 2, 1, 0)) AS type2, ' + 
                                               'SUM(IF(data' + pid + '_ticket.type = 3, 1, 0)) AS type3, ' + 
+                                              'SUM(IF(data' + pid + '_ticket.type = 4, 1, 0)) AS type4, ' + 
+                                              'SUM(IF(data' + pid + '_ticket.type = 5, 1, 0)) AS type5, ' + 
                                               'SUM(0) AS discount, ' + 
                                               'SUM(data' + pid + '_price.price * IF(data' + pid + '_ticket.preserve < 5, data' + pid + '_price.discount, 1) / 100) AS totalprice ' +
                                        'FROM data' + pid + '_paylist, data' + pid + '_ticket, data' + pid + '_price ' + 
@@ -162,6 +164,8 @@ function requestTotal(fbid, pid, user, ip, callback){
                                               'SUM(IF(data' + pid + '_ticket.type = 1, 1, 0)) AS type1, ' + 
                                               'SUM(IF(data' + pid + '_ticket.type = 2, 1, 0)) AS type2, ' + 
                                               'SUM(IF(data' + pid + '_ticket.type = 3, 1, 0)) AS type3, ' + 
+                                              'SUM(IF(data' + pid + '_ticket.type = 4, 1, 0)) AS type4, ' + 
+                                              'SUM(IF(data' + pid + '_ticket.type = 5, 1, 0)) AS type5, ' + 
                                               'SUM(0) AS discount, ' + 
                                               'SUM(data' + pid + '_price.price * IF(data' + pid + '_ticket.preserve < 5, data' + pid + '_price.discount, 1) / 100) AS totalprice ' +
                                        'FROM data' + pid + '_paylist, data' + pid + '_ticket, data' + pid + '_price ' + 
@@ -181,6 +185,8 @@ function requestTotal(fbid, pid, user, ip, callback){
                                               'SUM(IF(data' + pid + '_ticket.type = 1, 1, 0)) AS type1, ' +
                                               'SUM(IF(data' + pid + '_ticket.type = 2, 1, 0)) AS type2, ' +
                                               'SUM(IF(data' + pid + '_ticket.type = 3, 1, 0)) AS type3, ' +
+                                              'SUM(IF(data' + pid + '_ticket.type = 4, 1, 0)) AS type4, ' +
+                                              'SUM(IF(data' + pid + '_ticket.type = 5, 1, 0)) AS type5, ' +
                                               'SUM(0) AS discount, ' +
                                               'SUM(data' + pid + '_price.price * IF(data' + pid + '_ticket.preserve < 5, data' + pid + '_price.discount, 1) / 100) AS totalprice, ' +
                                               'SUM(IF(data' + pid + '_paylist.paymode = 1, data' + pid + '_price.price * IF(data' + pid + '_ticket.preserve < 5, data' + pid + '_price.discount, 1) / 100, 0)) AS oweprice ' +
@@ -203,6 +209,8 @@ function requestTotal(fbid, pid, user, ip, callback){
                                               'SUM(IF(data' + pid + '_ticket.type = 1, 1, 0)) AS type1, ' +
                                               'SUM(IF(data' + pid + '_ticket.type = 2, 1, 0)) AS type2, ' +
                                               'SUM(IF(data' + pid + '_ticket.type = 3, 1, 0)) AS type3, ' +
+                                              'SUM(IF(data' + pid + '_ticket.type = 4, 1, 0)) AS type4, ' +
+                                              'SUM(IF(data' + pid + '_ticket.type = 5, 1, 0)) AS type5, ' +
                                               'data' + pid + '_paylist.paymode AS paymode, ' +
                                               'data' + pid + '_paylist.discount AS discount, ' +
                                               'SUM(data' + pid + '_price.price * IF(data' + pid + '_ticket.preserve < 5, data' + pid + '_price.discount, 1) / 100) AS totalprice, ' +
