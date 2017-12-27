@@ -20,7 +20,7 @@ exports.proc = function(req, res){
 
 function checkPermission(query, ip, callback){
     if(query['id'] == 'guest'){
-        processCommand('guest', 0, query, ip, callback);
+        processCommand('guest', {'status': 0}, query, ip, callback);
     }
     else{
         fblogin.check(query['id'], query['token'], ip, function(result){
@@ -179,6 +179,7 @@ function requestTotal(fbid, pid, user, ip, callback){
                                        'FROM data' + pid + '_paylist ' + 
                                        'WHERE data' + pid + '_paylist.paymode = 1 ' +
                                        'GROUP BY data' + pid + '_paylist.time;',
+                     'queryString_3': 'SELECT id, saleid, DATE_FORMAT(time, \'%Y-%m-%d\') AS date, price FROM data' + pid + '_creditlist ORDER BY time;',
                      'queryString_4a': 'SELECT data' + pid + '_paylist.buyer AS buyer, ' +
                                               'data' + pid + '_paylist.department AS department, ' +
                                               'SUM(IF(data' + pid + '_ticket.type = 0, 1, 0)) AS type0, ' +
@@ -197,9 +198,9 @@ function requestTotal(fbid, pid, user, ip, callback){
                      'queryString_4b': 'SELECT data' + pid + '_paylist.buyer AS buyer, SUM(price) AS price ' +
                                        'FROM data' + pid + '_creditlist, data' + pid + '_paylist ' +
                                        'WHERE data' + pid + '_paylist.id = data' + pid + '_creditlist.saleid GROUP BY buyer;',
-                     'queryString_4c': 'SELECT buyer, SUM(discount) AS discount ' + 
-                                       'FROM data' + pid + '_paylist ' + 
-                                       'GROUP BY buyer;',
+                     'queryString_4c': 'SELECT buyer, SUM(discount) AS discount, paymode ' + 
+                                       'FROM data' + pid + '_paylist ' +
+                                       'GROUP BY buyer, paymode;',
                      'queryString_5a': 'SELECT data' + pid + '_paylist.id AS id, ' +
                                               'data' + pid + '_paylist.buyer AS buyer, ' +
                                               'data' + pid + '_paylist.department AS department, ' +

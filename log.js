@@ -16,7 +16,7 @@ var cTag = {
         "[ UPD  MANAG ]" : '\x1b[38;5;135m',
         "[ UPD  ADMIN ]" : '\x1b[38;5;111m',
         "[ REQ  GUEST ]" : '\x1b[38;5;119m',
-        "[ REQ  MANAG ]" : '\x1b[38;5;119m',
+        "[ REQ  MANAG ]" : '\x1b[38;5;27m',
         "[ REQ  ADMIN ]" : '\x1b[38;5;201m'
     };
 var cMsg = {

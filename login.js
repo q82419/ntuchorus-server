@@ -3,7 +3,7 @@ var log = require('./log');
 var fb = require('fb');
 var TAG = "[ CHECK   FB ]";
 
-fb.options({version: 'v2.8', appId: '[FACEBOOK_APP_ID]', appSecret: '[FACEBOOK_APP_SECRET]'});
+fb.options({version: '[FACEBOOK_API_VERSION]', appId: '[FACEBOOK_APP_ID]', appSecret: '[FACEBOOK_APP_SECRET]'});
 // Result -1: Error, others: Permission_Num
 
 module.exports = {
@@ -17,14 +17,14 @@ function checkFBLoginState(vid, vtoken, ip, callback){
         callback({'status': '-1'});
     else{
         fb.api('me', { fields: ['id', 'name'], access_token: vtoken }, function (res) {
-            if(res == undefined){
-                log.out.e(TAG, ip, "Access Token Checking Failed: " + vid);
-                callback({'status': '-1'});
-            }
-            else{
+            if(res != undefined && res.id != undefined){
                 queryManager(res.id, res.name, ip, function(result){
                     callback(result);
                 });
+            }
+            else{
+                log.out.e(TAG, ip, "Access Token Checking Failed: " + vid);
+                callback({'status': '-1'});
             }
         });
     }

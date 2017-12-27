@@ -44,7 +44,7 @@ function processCommand(fbid, mngdata, perm, query, ip, callback){
         db.dbQuery(queryGroupManager, callback, function(mnger){
             var department = -1;
             if(mnger.length == 1)
-                department = mnger['department'];
+                department = mnger[0]['department'];
 
             if(query['cmd'] == 'creNewProgram' && perm >= 3){
                 createNewProgram(fbid, query['data'], ip, callback);
@@ -52,7 +52,8 @@ function processCommand(fbid, mngdata, perm, query, ip, callback){
             else if(query['cmd'] == 'creSaleTicket' && (perm == 4 || department == 0)){
                 createSaleTicket(fbid, query['data'], queryProgram, ip, callback);
             }
-            else if(query['cmd'] == 'creCreditPay' && (perm == 4 || department == 0)){
+            else if(query['cmd'] == 'creCreditPayment' && (perm == 4 || department == 0)){
+                createCreditPayment(fbid, query['data'], queryProgram, ip, callback);
             }
             else{
                 log.out.w(TAG_a, ip, query['cmd'] + " Permission Denied: " + query['id']);
@@ -88,6 +89,7 @@ function createNewProgram(fbid, data, ip, callback){
             createset.push('INSERT INTO data' + result.insertId + '_price VALUES (' + data['price'][i]['id'] + ', ' + data['price'][i]['price'] + ', ' + data['price'][i]['discount'] + ');');
         createset.push('INSERT INTO data' + result.insertId + '_ticket (floor, row, seat, state, type, preserve) SELECT floor, row, seat, state, type, preserve FROM mapinit' + data['mapid'] + ';');
         createset.push('UPDATE data' + result.insertId + '_ticket SET type = 0 WHERE type >= ' + (data['price'].length - 1) + ';');
+        createset.push('UPDATE data' + result.insertId + '_ticket SET type = ' + (data['price'].length - 1) + ' WHERE preserve = 4;');
         createset.push('UPDATE mapattribute SET currentdataid = ' + result.insertId + ', isshowhidden = 0 WHERE id = 1;');
         var createsetfunction = [];
         createset.forEach(function(item){
@@ -114,9 +116,19 @@ function createSaleTicket(fbid, data, pid, ip, callback){
     var insertString = 'INSERT INTO data' + pid + '_paylist (buyer, department, saler, time, paymode, discount) VALUES ("' +
                        data['buyer'] + '", ' + data['department'] + ', ' + data['saler'] + ', "' + data['time'] + '", ' + data['paymode'] + ', ' + data['discount'] + ');';
     db.dbQuery(insertString, callback, function(result){
-        var updateString = 'UPDATE data' + pid + '_ticket SET saleid = ' + result.insertId + ' WHERE id in ' + idList + ';';
+        var updateString = 'UPDATE data' + pid + '_ticket SET saleid = ' + result.insertId + ', state = 2 WHERE id in ' + idList + ';';
         db.dbQuery(updateString, callback, function(rows){
             updateTimeStamp(pid, callback);
         });
+    });
+}
+
+/* Create add new credit payment record */
+function createCreditPayment(fbid, data, pid, ip, callback){
+    log.out.i(TAG_a, ip, "Create add credit payment from: " + fbid);
+    var insertString = 'INSERT INTO data' + pid + '_creditlist (saleid, time, price) VALUES (' +
+                       data['saleid'] + ', "' + data['time'] + '", ' + data['price'] + ');';
+    db.dbQuery(insertString, callback, function(result){
+        updateTimeStamp(pid, callback);
     });
 }

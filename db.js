@@ -1,7 +1,9 @@
 var mysql = require('mysql');
 var log = require('./log');
 var TAG = "[ SYS--MYSQL ]";
-var TAGcolor = 23;
+var util = require('util');
+var fs = require('fs');
+var log_file = fs.createWriteStream(__dirname + '/sqlquery.log', {flags : 'a'});
 
 var pool = mysql.createPool({
         host                : '[YOUR HOST]',
@@ -22,8 +24,9 @@ module.exports = {
             else{
                 connection.query(queryString, function(err, rows, fields) {
                     connection.release();
+                    log_file.write(queryString + '\n');
                     if(err){
-                        log.out.e(TAG, "LocalHost", "SQL Query Error : " + err);
+                        log.out.e(TAG, "LocalHost", "SQL Query Error : " + err + ", Query String : " + queryString);
                         errReturn({"status": '500'});
                     }
                     else if(callback != undefined)

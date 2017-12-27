@@ -45,7 +45,7 @@ function processCommand(fbid, mngdata, perm, query, ip, callback){
         db.dbQuery(queryGroupManager, callback, function(mnger){
             var department = -1;
             if(mnger.length == 1)
-                department = mnger['department'];
+                department = mnger[0]['department'];
 
             if(query['cmd'] == 'updSettings' && perm >= 3){
                 updateSettings(fbid, query['data'], ip, callback);
@@ -55,9 +55,6 @@ function processCommand(fbid, mngdata, perm, query, ip, callback){
             }
             else if(query['cmd'] == 'updAttribute' && (perm == 4 || department == 0)){
                 updateAttribute(fbid, query['data'], queryProgram, ip, callback);
-            }
-            else if(query['cmd'] == 'updSaleInformation' && (perm == 4 || department == 0)){
-                // Order edit
             }
             else if(query['cmd'] == 'updClearPreserve' && (perm == 4 || department == 0)){
                 updateClearPreserve(fbid, queryProgram, ip, callback);
