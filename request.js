@@ -13,7 +13,9 @@ exports.proc = function(req, res){
                 req.connection.remoteAddress || 
                 req.socket.remoteAddress ||
                 req.connection.socket.remoteAddress;
+    //console.log('----- Link start');
     checkPermission(query, reqip, function(result){
+        //console.log('----- Link close');
         res.end(JSON.stringify(result));
     });
 };
@@ -144,9 +146,9 @@ function requestTotal(fbid, pid, user, ip, callback){
     var queryset = { 'mapattribute'  : 'SELECT * FROM mapattribute;',
                      'category'      : 'SELECT * FROM mapcategory;',
                      'price'         : 'SELECT * FROM data' + pid + '_price;',
-                     'paylist'      : 'SELECT id, buyer, department, saler, DATE_FORMAT(time, \'%Y-%m-%d\') as time, paymode, discount FROM data' + pid + '_paylist;',
+                     'paylist'       : 'SELECT id, buyer, department, saler, DATE_FORMAT(time, \'%Y-%m-%d\') as time, paymode, discount FROM data' + pid + '_paylist;',
                      'queryManager'  : 'SELECT * FROM manager;',
-                     'queryString_1' : 'SELECT preserve, type, state, COUNT(*) AS num FROM data' + pid + '_ticket GROUP BY preserve, type, state;',
+                     'queryString_1' : 'SELECT preserve, type, state, COUNT(*) AS num FROM data' + pid + '_ticket WHERE preserve < 10 GROUP BY preserve, type, state;',
                      'queryString_2a': 'SELECT DATE_FORMAT(data' + pid + '_paylist.time, \'%Y-%m-%d\') AS date, ' +
                                               'SUM(IF(data' + pid + '_ticket.type = 0, 1, 0)) AS type0, ' + 
                                               'SUM(IF(data' + pid + '_ticket.type = 1, 1, 0)) AS type1, ' + 

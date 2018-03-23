@@ -74,20 +74,20 @@ function updateTimeStamp(pid, callback){
 /* Create new program tables */
 function createNewProgram(fbid, data, ip, callback){
     log.out.i(TAG_a, ip, "Create new program tables from: " + fbid);
-    var insertString = 'INSERT INTO mapcategory (year, season, title, mapid, message, time, dmsale, dmtotal, programsale, programprice, programcoupon) VALUES (' +
-                       data['year'] + ', ' + data['season'] + ', "' + data['title'] + '", ' + data['mapid'] + ', "公告訊息", now(), 0, 0, 0, ' + data['programprice'] + ', 0);';
+    var insertString = 'INSERT INTO mapcategory (year, season, title, mapid, mapwidth, message, time, dmsale, dmtotal, programsale, programprice, programcoupon) VALUES (' +
+                       data['year'] + ', ' + data['season'] + ', "' + data['title'] + '", ' + data['mapid'] + ', ' + data['mapwidth'] + ', "公告訊息", now(), 0, 0, 0, ' + data['programprice'] + ', 0);';
     db.dbQuery(insertString, callback, function(result){
         var createset = [];
         createset.push('CREATE TABLE data' + result.insertId + '_creditlist (id int NOT NULL AUTO_INCREMENT, saleid int, time date, price int, PRIMARY KEY (id));');
         createset.push('CREATE TABLE data' + result.insertId + '_manager (id int NOT NULL AUTO_INCREMENT, managerid int NOT NULL, department int NOT NULL, PRIMARY KEY (id));');
         createset.push('CREATE TABLE data' + result.insertId + '_paylist (id int NOT NULL AUTO_INCREMENT, buyer varchar(64), department int, saler int, time date, paymode int, discount int, PRIMARY KEY (id));');
         createset.push('CREATE TABLE data' + result.insertId + '_price (id int NOT NULL, price int NOT NULL, discount int NOT NULL, PRIMARY KEY(id));');
-        createset.push('CREATE TABLE data' + result.insertId + '_ticket (id int NOT NULL AUTO_INCREMENT, floor int NOT NULL, row int NOT NULL, seat int NOT NULL, state int NOT NULL, type int NOT NULL, preserve int NOT NULL, saleid int, PRIMARY KEY (id));');
+        createset.push('CREATE TABLE data' + result.insertId + '_ticket (id int NOT NULL AUTO_INCREMENT, px int NOT NULL, py int NOT NULL, floor int NOT NULL, row int NOT NULL, seat int NOT NULL, state int NOT NULL, type int NOT NULL, preserve int NOT NULL, text varchar(11) NOT NULL, saleid int, PRIMARY KEY (id));');
         for(var i = 0; i < data['manager'].length; i++)
             createset.push('INSERT INTO data' + result.insertId + '_manager (managerid, department) VALUES (' + data['manager'][i]['id'] + ', ' + data['manager'][i]['department'] + ');');
         for(var i = 0; i < data['price'].length; i++)
             createset.push('INSERT INTO data' + result.insertId + '_price VALUES (' + data['price'][i]['id'] + ', ' + data['price'][i]['price'] + ', ' + data['price'][i]['discount'] + ');');
-        createset.push('INSERT INTO data' + result.insertId + '_ticket (floor, row, seat, state, type, preserve) SELECT floor, row, seat, state, type, preserve FROM mapinit' + data['mapid'] + ';');
+        createset.push('INSERT INTO data' + result.insertId + '_ticket (px, py, floor, row, seat, state, type, preserve, text) SELECT px, py, floor, row, seat, state, type, preserve, text FROM mapinit' + data['mapid'] + ';');
         createset.push('UPDATE data' + result.insertId + '_ticket SET type = 0 WHERE type >= ' + (data['price'].length - 1) + ';');
         createset.push('UPDATE data' + result.insertId + '_ticket SET type = ' + (data['price'].length - 1) + ' WHERE preserve = 4;');
         createset.push('UPDATE mapattribute SET currentdataid = ' + result.insertId + ', isshowhidden = 0 WHERE id = 1;');
